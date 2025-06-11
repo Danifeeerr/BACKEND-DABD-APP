@@ -116,4 +116,4 @@ def insert_trainer(alumne_data: AlumneIn, db: Session = Depends(get_db)):
 
     return nou_alumne
 
-#-------------------------------------------------------------------------------------
+#-----------------------------ENDPOINTS PER ELS TUTORS LEGALS--------------------------------------------------------
