@@ -1,25 +1,20 @@
 from pydantic import BaseModel
-from decimal import Decimal
 
-class TrainerOut(BaseModel):
-    usuari: str
-    correu: str
-    sou_hora: Decimal
-
-    class Config:
-        orm_mode = True
-
-class TrainerIn(BaseModel):
+class PersonaIn(BaseModel):
     usuari: str
 
     class Config:
         orm_mode = True
 
-
-class TrainerInsert(BaseModel):
+class PersonaOut(BaseModel):
     usuari: str
-    correu: str
-    sou_hora: Decimal
+
+    class Config:
+        orm_mode = True
+
+class PersonaInsert(BaseModel):
+    usuari: str
+    contrassenya: str
 
     class Config:
         orm_mode = True

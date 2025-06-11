@@ -1,12 +1,11 @@
 from sqlalchemy import Column, String, Numeric, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
+from database import Base
 
-Base = declarative_base()
 
 class Trainer(Base):
     __tablename__ = "trainer"
-    __table_args__ = {"schema": "practica"}
+    __table_args__ = {"schema": "logiscool"}
 
-    usuari = Column(String, ForeignKey("practica.persona.usuari", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+    usuari = Column(String, ForeignKey("logiscool.persona.usuari", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
     correu = Column(String, nullable=False)
     sou_hora = Column(Numeric(10, 2), nullable=False)
