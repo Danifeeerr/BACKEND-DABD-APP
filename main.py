@@ -13,6 +13,7 @@ from models.trainer import Trainer
 from models.alumne import Alumne
 from models.aula import Aula
 from models.grup import Grup
+from models.curs import Curs
 
 #-----------------------Imports de schemas--------------------------------------------------------
 from models.tutor_legal import TutorLegal
@@ -22,6 +23,7 @@ from schemas.alumne import AlumneIn, AlumneOut
 from schemas.tutor_legal import TutorLegalIn, TutorLegalOut, TutorCerca
 from schemas.aula import AulaIn, AulaOut
 from schemas.grup import GrupIn, GrupUpdate, GrupOut
+from schemas.curs import CursIn, CursOut
 
 
 load_dotenv()
@@ -175,3 +177,61 @@ def get_aula_by_number(aula_data: AulaIn, db: Session = Depends(get_db)):
 
 #-----------------------------ENDPOINTS PER ELS GRUPS--------------------------------------------------------
 
+@app.get("/grups", response_model=List[GrupOut])
+def get_all_grups(db: Session = Depends(get_db)):
+    return db.query(Grup).all()
+
+@app.post("/grupId", response_model=GrupOut)
+def get_grup_by_id(grup_data: GrupIn, db: Session = Depends(get_db)):
+    grup = db.query(Grup).filter(Grup.id == grup_data.id).first()
+    if not grup:
+        raise HTTPException(status_code=404, detail="Grup no trobat")
+    return grup
+
+@app.post("/grupInsert", response_model=GrupOut)
+def insert_grup(grup_data: GrupIn, db: Session = Depends(get_db)):
+
+    nou_grup = Grup(**grup_data.model_dump())
+    db.add(nou_grup)
+    db.commit()
+    db.refresh(nou_grup)
+
+    return nou_grup
+
+@app.post("/grupUpdate/{grup_id}", response_model=GrupOut)
+def update_grup(grup_id: int, grup_data: GrupUpdate, db: Session = Depends(get_db)):
+    grup = db.query(Grup).filter(Grup.id == grup_id).first()
+    if not grup:
+        raise HTTPException(status_code=404, detail="Grup no trobat")
+
+    for key, value in grup_data.model_dump(exclude_unset=True).items():
+        setattr(grup, key, value)
+
+    db.commit()
+    db.refresh(grup)
+
+    return grup
+
+#-----------------------------ENDPOINTS PER ELS CURSOS--------------------------------------------------------
+@app.get("/cursos", response_model=List[CursOut])
+def get_all_cursos(db: Session = Depends(get_db)):
+    return db.query(Curs).all()
+
+@app.post("/cursInsert", response_model=CursOut)
+def insert_curs(curs_data: CursIn, db: Session = Depends(get_db)):
+    if db.query(Curs).filter_by(codi=curs_data.codi).first():
+        raise HTTPException(status_code=400, detail="Curs ja existeix")
+
+    nou_curs = Curs(**curs_data.model_dump())
+    db.add(nou_curs)
+    db.commit()
+    db.refresh(nou_curs)
+
+    return nou_curs
+
+@app.post("/cursCode", response_model=CursOut)
+def get_curs_by_code(curs_data: CursIn, db: Session = Depends(get_db)):
+    curs = db.query(Curs).filter(Curs.codi == curs_data.codi).first()
+    if not curs:
+        raise HTTPException(status_code=404, detail="Curs no trobat")
+    return curs
